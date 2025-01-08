@@ -38,8 +38,7 @@ let Users = sequelize.define('Users', {
         allowNull: true,
     },
     user_type: {
-        type: DataTypes.STRING,
-        allowNull: false,
+        type: DataTypes.ENUM('usuario', 'administrador'),
         defaultValue: 'usuario',
     },
     liter_counter: {
@@ -51,8 +50,33 @@ let Users = sequelize.define('Users', {
         type: DataTypes.DATE,
         allowNull: false,
         defaultValue: DataTypes.NOW,
+    },
+    no_show_count: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0
+    },
+    is_blocked: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+    },
+    block_until: {
+        type: DataTypes.DATE,
+        allowNull: true,
     }
-})
+}, {
+    indexes: [
+      {
+        unique: true,
+        fields: ['username'],
+      },
+      {
+        unique: true,
+        fields: ['email'],
+      },
+    ],
+  })
 
 
 module.exports = Users;
