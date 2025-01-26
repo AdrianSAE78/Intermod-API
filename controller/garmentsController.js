@@ -26,8 +26,6 @@ exports.getGarmentsById = async (req, res) => {
 }
 
 exports.createGarment = async (req, res) => {
-    upload.single('garment_image')(req, res, async (err) => {
-        if (err) { return res.status(400).json({ error: err.message }) }
         try {
 
             let { title, description, size, condition, brand } = req.body;
@@ -47,7 +45,6 @@ exports.createGarment = async (req, res) => {
             console.error(error);
             res.status(500).json({ error: error.message });
         }
-    });
 };
 
 exports.updateGarment = async (req, res) => {

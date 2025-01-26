@@ -26,8 +26,6 @@ exports.getUserById = async (req, res) => {
 }
 
 exports.createUser = async (req, res) => {
-    upload.single('profile_picture')(req, res, async (err) => {
-        if (err) { return res.status(400).json({ error: err.message }) }
         try {
 
             let { first_name, last_name, username, password, email } = req.body;
@@ -45,7 +43,6 @@ exports.createUser = async (req, res) => {
             res.status(500).json({ error: error.message });
 
         }
-    })
 }
 
 exports.updateUser = async (req, res) => {
