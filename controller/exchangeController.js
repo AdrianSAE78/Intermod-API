@@ -1,4 +1,5 @@
 const tableRelations = require('../model/tableRelations');
+const {Sequelize} = require('sequelize');
 
 exports.getAllExchanges = async (req, res) => {
     try {
@@ -24,29 +25,78 @@ exports.getExchangesById = async (req, res) => {
     }
 }
 
+exports.getUserExchanges = async (req, res) => {
+    try {
+        const { user_id } = req.params;
+
+        const exchanges = await tableRelations.Exchange.findAll({
+            where: { [Sequelize.Op.or]: [{ user1_id: sender_user }, { user2_id: receiver_user }] },
+            include: [
+                { model: tableRelations.Garments, as: 'garment1', attributes: ['title', 'garment_image'] },
+                { model: tableRelations.Garments, as: 'garment2', attributes: ['title', 'garment_image'] },
+            ],
+            order: [['createdAt', 'DESC']]
+        });
+
+        res.status(200).json(exchanges);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener el historial de intercambios.' });
+    }
+}
+
 exports.createExchange = async (req, res) => {
     try {
-        let { status, suggested_location, match_date } = req.body;
-        let exchange = await tableRelations.Exchange.create({ status, suggested_location, match_date });
-        res.status(201).json(exchange);
+        const { sent_exchanges, received_exchanges, sender_user, receiver_user } = req.body;
+        let sentExchanges = await tableRelations.Garments.findOne({where: {id: sent_exchanges, status: 'disponible'}})
+        let receivedExchanges =  await tableRelations.Garments.findOne({where: {id: received_exchanges, status: 'disponible'}})
+        if (!sentExchanges || !receivedExchanges) {
+            return res.status(400).json({ error: 'Uno o ambos ítems no están disponibles para intercambio.' });
+        }
+        let exchange = await Exchanges.create({
+            sender_user,
+            receiver_user,
+            received_exchanges,
+            sent_exchanges,
+            status: 'pending'
+        });
+
+        res.status(201).json({
+            message: "Solicitud de intercambio creada con éxito.",
+            exchange
+        });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: error.message });
     }
 }
 
-exports.updateExchange = async (req, res) => {
+exports.respondToExchange = async (req, res) => {
     try {
-        let { id } = req.params;
-        let { status, suggested_location, match_date } = req.body;
+        let { id, response } = req.body;
 
-        let exchange = await tableRelations.Exchange.findByPk(id);
+        const exchange = await tableRelations.Exchange.findOne({ where: { id, status: 'pendiente' } });
+
         if (!exchange) {
-            return res.status(404).json({ error: "Prenda no encontrada" });
+            return res.status(404).json({ error: 'Intercambio no encontrado o ya procesado.' });
         }
 
-        await exchange.update({ status, suggested_location, match_date });
-        res.status(200).json(exchange)
+        if (response === 'aceptado') {
+            exchange.status = 'completado';
+
+            await tableRelations.Garments.update({ status: 'intercambiado' }, { where: { id: [exchange.sent_exchanges, exchange.received_exchanges] } });
+
+        } else {
+            exchange.status = 'rechazado';
+
+            await tableRelations.Garments.update({ status: 'disponible' }, { where: { item_id: [exchange.sent_exchanges, exchange.received_exchanges] } });
+        }
+
+        await exchange.save();
+        res.status(200).json({
+            message: `Intercambio ${response === 'aceptado' ? 'aceptado' : 'rechazado'} con éxito.`,
+            exchange
+        })
 
     } catch (error) {
         console.error(error);
@@ -69,3 +119,5 @@ exports.deleteExchange = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+
+

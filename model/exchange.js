@@ -16,7 +16,8 @@ let Exchange = sequelize.define('Exchange', {
     defaultValue: DataTypes.NOW,
   },
   schedule_date: {
-    type: DataTypes.DATE
+    type: DataTypes.DATE,
+    defaultValue: null,
   },
   confirmed_by_sender: {
     type: DataTypes.BOOLEAN,

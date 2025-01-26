@@ -8,6 +8,6 @@ router.get('/garments', garmentController.getAllGarments);
 router.post('/garments', garmentController.createGarment);
 router.get('/garments/:id', garmentController.getGarmentsById);
 router.put('/garments/:id', upload.single('garment_image'), garmentController.updateGarment);
-router.delete('/garments:id', garmentController.deleteGarment);
+router.delete('/garments/:id', garmentController.deleteGarment);
 
 module.exports = router;

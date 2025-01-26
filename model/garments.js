@@ -26,6 +26,10 @@ const Garments = sequelize.define('Garments', {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  status: {
+    type: DataTypes.ENUM('disponible', 'intercambiado'),
+    defaultValue: 'disponible',
+  },
   upload_date: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,

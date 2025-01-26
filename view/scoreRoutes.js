@@ -6,6 +6,6 @@ router.get('/scores', scoreController.getAllScores);
 router.post('/scores', scoreController.createScore);
 router.get('/scores/:id', scoreController.getScoresById);
 router.put('/scores/:id', scoreController.updateScore);
-router.delete('/scores:id', scoreController.deleteScore);
+router.delete('/scores/:id', scoreController.deleteScore);
 
 module.exports = router;
