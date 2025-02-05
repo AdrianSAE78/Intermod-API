@@ -11,6 +11,7 @@ const categoriesRoutes = require('./view/categoriesRoutes');
 const userPreferencesRoutes = require('./view/userPreferencesRoutes');
 const path = require('path');
 
+const { verifyToken } = require('./middlewares/auth'); 
 
 const app = express();
 let port = 3000;
