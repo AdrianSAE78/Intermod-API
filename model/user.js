@@ -7,27 +7,20 @@ let Users = sequelize.define('Users', {
         autoIncrement: true,
         primaryKey: true,
     },
-    first_name: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    last_name: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
     username: {
         type: DataTypes.STRING,
         allowNull: false,
         unique: true,
     },
-    password: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
     email: {
         type: DataTypes.STRING,
         allowNull: false,
         unique: true,
+    },
+    firebase_uid: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        unique: true
     },
     profile_picture: {
         type: DataTypes.STRING,
@@ -35,7 +28,11 @@ let Users = sequelize.define('Users', {
     },
     trust_score: {
         type: DataTypes.FLOAT,
-        allowNull: true,
+        defaultValue: 5.0,
+        validate: {
+            min: 0.0,
+            max: 5.0
+        }
     },
     user_type: {
         type: DataTypes.ENUM('usuario', 'administrador'),
@@ -44,7 +41,7 @@ let Users = sequelize.define('Users', {
     liter_counter: {
         type: DataTypes.FLOAT,
         allowNull: false,
-        defaultValue: 0,
+        defaultValue: 0.0,
     },
     date_joined: {
         type: DataTypes.DATE,
@@ -67,16 +64,16 @@ let Users = sequelize.define('Users', {
     }
 }, {
     indexes: [
-      {
-        unique: true,
-        fields: ['username'],
-      },
-      {
-        unique: true,
-        fields: ['email'],
-      },
+        {
+            unique: true,
+            fields: ['username'],
+        },
+        {
+            unique: true,
+            fields: ['email'],
+        },
     ],
-  })
+})
 
 
 module.exports = Users;
