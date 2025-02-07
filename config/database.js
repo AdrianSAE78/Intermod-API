@@ -1,9 +1,10 @@
-//Crear archvio .env en la raìz del repositorio, que contenga las variables de la base de datos. Ejemplo:
-//DB_NAME=IntermodDB
-//DB_USER=postgres
-//DB_PASSWORD=12345
-//DB_HOST=localhost
-//DB_PORT=5432
+// DB_NAME=IntermodDB
+// DB_USER=postgres
+// DB_PASSWORD=12345
+// DB_HOST=localhost
+// DB_PORT=5432
+// JWT_SECRET=tu_clave_secreta_jwt
+// FIREBASE_PROJECT_ID=tu-project-id
 
 require('dotenv').config();
 const {Sequelize} = require('sequelize');

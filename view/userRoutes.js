@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const userController = require('../controller/userController');
 const upload = require('../config/multer');
-
+const { verifyToken } = require('../middlewares/auth');
 
 router.get('/users', userController.getAllUsers);
 router.post('/users', upload.single('profile_picture'), userController.createUser);
