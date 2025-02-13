@@ -20,7 +20,7 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(morgan('dev'));
 
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use('/api', userRoutes);
 app.use('/api', scoreRoutes);

@@ -24,7 +24,7 @@ const Garments = sequelize.define('Garments', {
   },
   brand: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
   },
   status: {
     type: DataTypes.ENUM('disponible', 'intercambiado'),

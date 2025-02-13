@@ -26,27 +26,28 @@ exports.getGarmentsById = async (req, res) => {
 }
 
 exports.createGarment = async (req, res) => {
-        try {
-            console.log("BODY RECIBIDO:", req.body);
-            console.log("ARCHIVO RECIBIDO:", req.file);
-
-            let { title, description, size, condition, brand } = req.body;
-            if (!title || !description || !size || !condition || !brand) {
-                return res.status(400).json({ error: 'Todos los campos son obligatorios' });
-            }
-
-            let garment_image = req.file ? req.file.filename : null;
-            if (!garment_image) {
-                return res.status(400).json({ error: 'La imagen es obligatoria' });
-            }
-            let garment = await tableRelations.Garments.create({ title, garment_image, description, size, condition, brand, upload_date: new Date(), is_available: true, });
-
-            res.status(201).json(garment);
-
-        } catch (error) {
-            console.error("ERROR EN EL BACKEND:" + error);
-            res.status(500).json({ error: error.message });
+    try {
+        let { title, description, size, condition, categoryId } = req.body;
+        if (!title || !size || !condition || !categoryId) {
+            return res.status(400).json({ error: 'Todos los campos son obligatorios' });
         }
+
+        let garment_image = req.file ? req.file.filename : null;
+
+        let garment = await tableRelations.Garments.create({ 
+            title, 
+            description, 
+            size, 
+            condition, 
+            categoryId, 
+            garment_image 
+        });
+
+        res.status(201).json(garment);
+    } catch (error) {
+        console.error("Error al crear la prenda:", error);
+        res.status(500).json({ error: error.message });
+    }
 };
 
 exports.updateGarment = async (req, res) => {
