@@ -9,6 +9,7 @@ const UserPreferences = require('./userPreferences');
 Users.hasMany(Garments, { foreignKey: 'userId', as: 'garments' });
 Users.hasMany(Exchange, { foreignKey: 'senderUserId', as: 'sent_exchanges' });
 Users.hasMany(Exchange, { foreignKey: 'receiverUserId', as: 'received_exchanges' });
+Users.hasOne(UserPreferences, { foreignKey: 'userId', as: 'user_preferences' });
 
 
 Scores.belongsTo(Exchange, { foreignKey: 'exchangeId', as: 'exchange', onDelete: 'CASCADE' });

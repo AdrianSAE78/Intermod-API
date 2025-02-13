@@ -10,10 +10,6 @@ const Garments = sequelize.define('Garments', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  description: {
-    type: DataTypes.STRING(350),
-    allowNull: false,
-  },
   size: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -37,6 +33,10 @@ const Garments = sequelize.define('Garments', {
   is_available: {
     type: DataTypes.BOOLEAN,
     defaultValue: true,
+  },
+  match_hours: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
   },
 }, {
   indexes: [
