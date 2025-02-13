@@ -27,6 +27,8 @@ exports.getGarmentsById = async (req, res) => {
 
 exports.createGarment = async (req, res) => {
         try {
+            console.log("BODY RECIBIDO:", req.body);
+            console.log("ARCHIVO RECIBIDO:", req.file);
 
             let { title, description, size, condition, brand } = req.body;
             if (!title || !description || !size || !condition || !brand) {
@@ -42,7 +44,7 @@ exports.createGarment = async (req, res) => {
             res.status(201).json(garment);
 
         } catch (error) {
-            console.error(error);
+            console.error("ERROR EN EL BACKEND:" + error);
             res.status(500).json({ error: error.message });
         }
 };
