@@ -14,7 +14,15 @@ exports.getAllGarments = async (req, res) => {
 exports.getGarmentsById = async (req, res) => {
     try {
         let { id } = req.params;
-        let garment = await tableRelations.Garments.findByPk(id);
+        let garment = await tableRelations.Garments.findByPk(id, {
+            include: [
+                {
+                    model: tableRelations.Users,
+                    as: 'user_garments',
+                    attributes: ['id', 'username', 'email']
+                }
+            ]
+        });
         if (!garment) {
             return res.status(404).json({ error: "Prenda no encontrada" });
         }
