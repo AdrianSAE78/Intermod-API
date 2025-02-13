@@ -133,4 +133,5 @@ dist
 /config/firebase-service-account.json
 
 # Carpeta de Uplaods
-/uploads
+uploads/*.jpg
+uploads/*.png
