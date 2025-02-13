@@ -87,7 +87,7 @@ exports.createGarment = async (req, res) => {
         if (!garment_image) {
             return res.status(400).json({ error: 'La imagen es obligatoria' });
         }
-        let garment = await tableRelations.Garments.create({ title, garment_image, description, size, condition, brand, upload_date: new Date(), is_available: true, });
+        let garment = await tableRelations.Garments.create({ title, garment_image, description, size, condition, brand, upload_date: new Date(), is_available: true, match_hours: false});
 
         res.status(201).json(garment);
 
