@@ -15,7 +15,7 @@ exports.getUserPreferencessById = async (req, res) => {
         let { id } = req.params;
         let userPreference = await tableRelations.UserPreferences.findByPk(id);
         if (!userPreference) {
-            return res.status(404).json({ error: "Prenda no encontrada" });
+            return res.status(404).json({ error: "Usuario no encontrado" });
         }
         res.status(200).json(userPreference);
     } catch (error) {
@@ -26,26 +26,32 @@ exports.getUserPreferencessById = async (req, res) => {
 
 exports.createUserPreference = async (req, res) => {
     try {
-        let { status, suggested_location, match_date } = req.body;
-        let userPreference = await tableRelations.UserPreferences.create({ status, suggested_location, match_date });
+        let { prefered_free_hours, prefered_size, prefered_size_shoes, prefered_style, userId } = req.body;
+        let userPreference = await tableRelations.UserPreferences.create({ 
+            prefered_free_hours, 
+            prefered_size, 
+            prefered_size_shoes, 
+            prefered_style,
+            userId
+        });
         res.status(201).json(userPreference);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: error.message });
     }
-}
+};
 
 exports.updateUserPreference = async (req, res) => {
     try {
         let { id } = req.params;
-        let { status, suggested_location, match_date } = req.body;
+        let { prefered_free_hours, prefered_size, prefered_size_shoes, prefered_style } = req.body;
 
         let userPreference = await tableRelations.UserPreferences.findByPk(id);
         if (!userPreference) {
-            return res.status(404).json({ error: "Prenda no encontrada" });
+            return res.status(404).json({ error: "Usuario no encontrado" });
         }
 
-        await userPreference.update({ status, suggested_location, match_date });
+        await userPreference.update({ prefered_free_hours, prefered_size, prefered_size_shoes, prefered_style });
         res.status(200).json(userPreference)
 
     } catch (error) {
