@@ -11,6 +11,7 @@ const categoriesRoutes = require('./view/categoriesRoutes');
 const userPreferencesRoutes = require('./view/userPreferencesRoutes');
 const path = require('path');
 
+const { verifyToken } = require('./middlewares/auth'); 
 
 const app = express();
 let port = 3000;
@@ -19,7 +20,7 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(morgan('dev'));
 
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use('/api', userRoutes);
 app.use('/api', scoreRoutes);
