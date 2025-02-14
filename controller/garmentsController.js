@@ -5,10 +5,8 @@ function compareFreeHours(freeHours1, freeHours2) {
     // Cada elemento es un objeto: { day, start, end }
     for (const slot1 of freeHours1) {
         for (const slot2 of freeHours2) {
-            if (slot1.day === slot2.day) {
-                if (slot1.start < slot2.end && slot2.start < slot1.end) {
-                    return true;
-                }
+            if (slot1.start < slot2.end && slot2.start < slot1.end) {
+                return true;
             }
         }
     }
@@ -87,7 +85,7 @@ exports.createGarment = async (req, res) => {
         if (!garment_image) {
             return res.status(400).json({ error: 'La imagen es obligatoria' });
         }
-        let garment = await tableRelations.Garments.create({ title, garment_image, description, size, condition, brand, upload_date: new Date(), is_available: true, match_hours: false});
+        let garment = await tableRelations.Garments.create({ title, garment_image, description, size, condition, brand, upload_date: new Date(), is_available: true, match_hours: false });
 
         res.status(201).json(garment);
 

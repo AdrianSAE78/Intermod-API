@@ -15,7 +15,7 @@ let UserPreferences = sequelize.define('UserPreferences', {
     allowNull: false,
   },
   prefered_style: {
-    type: DataTypes.STRING,
+    type: DataTypes.ARRAY(DataTypes.STRING),
     allowNull: false,
   },
 });
