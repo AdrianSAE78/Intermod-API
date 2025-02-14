@@ -1,14 +1,5 @@
 const admin = require('../config/firebase');
-const jwt = require('jsonwebtoken');
 const tableRelations = require('../model/tableRelations');
-
-const generateJWT = (user) => {
-  return jwt.sign(
-    { id: user.id, email: user.email, user_type: user.user_type },
-    process.env.JWT_SECRET,
-    { expiresIn: '1h' }
-  );
-};
 
 exports.googleLogin = async (req, res) => {
   try {
@@ -30,18 +21,20 @@ exports.googleLogin = async (req, res) => {
       }
     });
 
-    // Generar JWT propio
-    const token = generateJWT(user);
+     // Verificar si el usuario tiene preferencias
+     const userPreferences = await tableRelations.UserPreferences.findOne({
+      where: { user_preferences: user.id }
+    });
 
     res.json({
       success: true,
-      token,
       user: {
         id: user.id,
         email: user.email,
         username: user.username,
         profile_picture: user.profile_picture
-      }
+      },
+      profileCompleted: !!userPreferences
     });
 
   } catch (error) {
