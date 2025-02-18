@@ -9,7 +9,7 @@ let Exchange = sequelize.define('Exchange', {
   suggested_location: {
     type: DataTypes.STRING,
     allowNull: false,
-    defaultValue: 'Patio Central PUCE',
+    defaultValue: 'Teatro UCE',
   },
   match_date: {
     type: DataTypes.DATE,

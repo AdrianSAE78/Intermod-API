@@ -9,6 +9,7 @@ const garmentRoutes = require('./view/garmentRoutes');
 const exchangeRoutes = require('./view/exchangeRoutes');
 const categoriesRoutes = require('./view/categoriesRoutes');
 const userPreferencesRoutes = require('./view/userPreferencesRoutes');
+const authRoutes = require('./view/authRoutes')
 const path = require('path');
 
 const { verifyToken } = require('./middlewares/auth'); 
@@ -28,6 +29,7 @@ app.use('/api', garmentRoutes);
 app.use('/api', exchangeRoutes);
 app.use('/api', categoriesRoutes);
 app.use('/api', userPreferencesRoutes);
+app.use('/auth', authRoutes);
 
 sequelize.sync().then(() => {
     console.log('Base de Datos Conectada!');

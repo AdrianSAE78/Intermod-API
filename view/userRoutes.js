@@ -6,7 +6,7 @@ const { verifyToken } = require('../middlewares/auth');
 
 router.get('/users', userController.getAllUsers);
 router.post('/users', upload.single('profile_picture'), userController.createUser);
-router.get('/users/:id', userController.getUserById);
+router.get('/users/:firebaseUID', userController.getUserById);
 router.put('/users/:id', userController.updateUser);
 router.delete('/users/:id', userController.deleteUser);
 

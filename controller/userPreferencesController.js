@@ -27,6 +27,9 @@ exports.getUserPreferencessById = async (req, res) => {
 exports.createUserPreference = async (req, res) => {
     try {
         let { prefered_free_hours, prefered_size, prefered_size_shoes, prefered_style, userId } = req.body;
+        if (!Array.isArray(prefered_free_hours)) {
+            prefered_free_hours = [prefered_free_hours];
+        }
         let userPreference = await tableRelations.UserPreferences.create({ 
             prefered_free_hours, 
             prefered_size, 
@@ -43,15 +46,14 @@ exports.createUserPreference = async (req, res) => {
 
 exports.updateUserPreference = async (req, res) => {
     try {
-        let { id } = req.params;
-        let { prefered_free_hours, prefered_size, prefered_size_shoes, prefered_style } = req.body;
+        let { prefered_free_hours, prefered_size, prefered_size_shoes, prefered_style, userId } = req.body;
 
         let userPreference = await tableRelations.UserPreferences.findByPk(id);
         if (!userPreference) {
             return res.status(404).json({ error: "Usuario no encontrado" });
         }
 
-        await userPreference.update({ prefered_free_hours, prefered_size, prefered_size_shoes, prefered_style });
+        await userPreference.update({ prefered_free_hours: JSON.stringify(prefered_free_hours), prefered_size, prefered_size_shoes, prefered_style, userId });
         res.status(200).json(userPreference)
 
     } catch (error) {

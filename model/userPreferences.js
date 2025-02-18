@@ -3,7 +3,7 @@ const sequelize = require('../config/database');
 
 let UserPreferences = sequelize.define('UserPreferences', {
   prefered_free_hours: {
-    type: DataTypes.ARRAY(DataTypes.JSON),
+    type: DataTypes.JSON,
     allowNull: false,
   },
   prefered_size: {

@@ -1,3 +1,4 @@
+const { where } = require('sequelize');
 const upload = require('../config/multer');
 const tableRelations = require('../model/tableRelations');
 
@@ -13,8 +14,10 @@ exports.getAllUsers = async (req, res) => {
 
 exports.getUserById = async (req, res) => {
     try {
-        let { id } = req.params;
-        let user = await tableRelations.Users.findByPk(id);
+        let { firebaseUID } = req.params;
+        let user = await tableRelations.Users.findOne({
+            where: { firebase_uid: firebaseUID }
+        });
         if (!user) {
             return res.status(404).json({ error: "Usuario no encontrado" });
         }

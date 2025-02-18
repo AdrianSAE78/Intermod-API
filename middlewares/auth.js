@@ -1,25 +1,23 @@
-const jwt = require('jsonwebtoken');
-const tableRelations = require('../model/tableRelations');
+const admin = require('../config/firebase');
 
-exports.verifyToken = async (req, res, next) => {
-  const token = req.headers.authorization?.split(' ')[1];
-  
+const authenticate = async (req, res, next) => {
+  const token = req.headers.authorization?.split(" ")[1]; // Obtener el token del encabezado Authorization
+  console.log("Token recibido:", token); // Verifica si el token está siendo recibido
+
   if (!token) {
-    return res.status(401).json({ error: 'Acceso no autorizado' });
+    return res.status(403).json({ error: "Acceso denegado" });
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await Users.findByPk(decoded.id);
-    
-    if (!user) {
-      return res.status(404).json({ error: 'Usuario no encontrado' });
-    }
-
-    req.user = user;
-    next();
+    // Verifica el token con Firebase Admin SDK
+    const decodedToken = await admin.auth().verifyIdToken(token);
+    console.log("Token decodificado:", decodedToken);
+    req.user = decodedToken; // El token decodificado contiene la información del usuario
+    next(); // Continua con la ejecución de la siguiente función
   } catch (error) {
-    console.error('Error en verificación de token:', error);
-    res.status(401).json({ error: 'Token inválido o expirado' });
+    console.error("Error al verificar el token:", error);
+    return res.status(401).json({ error: "Token inválido" });
   }
 };
+
+module.exports = authenticate;

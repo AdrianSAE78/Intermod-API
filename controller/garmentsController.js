@@ -2,7 +2,13 @@ const upload = require('../config/multer');
 const tableRelations = require('../model/tableRelations');
 
 function compareFreeHours(freeHours1, freeHours2) {
-    // Cada elemento es un objeto: { day, start, end }
+    // Verifica si ambos son arrays
+    if (!Array.isArray(freeHours1) || !Array.isArray(freeHours2)) {
+        console.log("Uno de los valores no es un array:", freeHours1, freeHours2);
+        return false;
+    }
+
+    // Compara los horarios
     for (const slot1 of freeHours1) {
         for (const slot2 of freeHours2) {
             if (slot1.start < slot2.end && slot2.start < slot1.end) {
@@ -27,7 +33,18 @@ exports.getGarmentsById = async (req, res) => {
     try {
         let { id } = req.params;
 
-        const currentUserId = req.user && req.user.id;
+
+        const { user } = req; // El usuario autenticado
+
+        const currentUserUid = req.user?.uid;
+
+        const currentUserId = await tableRelations.Users.findOne({
+            where: { firebase_uid: currentUserUid }
+        });
+
+        console.log("Current User UID:", currentUserUid);
+
+        console.log("Current User ID:", currentUserId.id);
 
         let garment = await tableRelations.Garments.findByPk(id, {
             include: [
@@ -49,34 +66,77 @@ exports.getGarmentsById = async (req, res) => {
             return res.status(404).json({ error: "Prenda no encontrada" });
         }
 
-        if (currentUserId) {
+        let match_hours = null;
+
+        if (currentUserId.id) {
             const currentUserPref = await tableRelations.UserPreferences.findOne({
-                where: { userId: currentUserId },
+                where: { userId: currentUserId.id },
                 attributes: ['prefered_free_hours']
             });
 
+            console.log(currentUserPref)
+
             // Verificamos que ambos usuarios tengan definido su arreglo de horarios
             if (currentUserPref && garment.user_garments.user_preferences) {
-                match_hours = compareFreeHours(
-                    garment.user_garments.user_preferences.prefered_free_hours,
-                    currentUserPref.prefered_free_hours
-                );
+
+                const user1Hours = Array.isArray(currentUserPref.prefered_free_hours)
+                    ? currentUserPref.prefered_free_hours
+                    : [];
+
+                const user2Hours = Array.isArray(garment.user_garments.user_preferences.prefered_free_hours)
+                    ? garment.user_garments.user_preferences.prefered_free_hours
+                    : [];
+
+                console.log("Horarios usuario actual:", user1Hours);
+                console.log("Horarios usuario prenda:", user2Hours);
+
+                match_hours = compareFreeHours(user1Hours, user2Hours);
             }
         }
 
-        res.status(200).json(garment, match_hours);
+        res.status(200).json({ garment, match_hours });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: error.message });
     }
 }
 
+exports.getUserGarments = async (req, res) => {
+    try {
+
+        const { user } = req; // El usuario autenticado
+
+        const currentUserUid = req.user?.uid;
+
+        const currentUserId = await tableRelations.Users.findOne({
+            where: { firebase_uid: currentUserUid }
+        });
+
+        console.log("Current User UID:", currentUserUid);
+
+        console.log("Current User ID:", currentUserId.id);
+
+        if (!currentUserId) {
+            return res.status(400).json({ error: "No se especificó el ID del usuario" });
+        }
+
+        const garments = await tableRelations.Garments.findAll({
+            where: { userId: currentUserId.id }
+        });
+
+        res.status(200).json(garments);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: error.message });
+    }
+};
+
 exports.createGarment = async (req, res) => {
     try {
         console.log("BODY RECIBIDO:", req.body);
         console.log("ARCHIVO RECIBIDO:", req.file);
 
-        let { title, description, size, condition, brand } = req.body;
+        let { title, description, size, condition, brand, userId, categoryId } = req.body;
         if (!title || !description || !size || !condition || !brand) {
             return res.status(400).json({ error: 'Todos los campos son obligatorios' });
         }
@@ -85,7 +145,7 @@ exports.createGarment = async (req, res) => {
         if (!garment_image) {
             return res.status(400).json({ error: 'La imagen es obligatoria' });
         }
-        let garment = await tableRelations.Garments.create({ title, garment_image, description, size, condition, brand, upload_date: new Date(), is_available: true, match_hours: false });
+        let garment = await tableRelations.Garments.create({ title, garment_image, description, size, condition, brand, userId, categoryId, upload_date: new Date(), is_available: true, match_hours: false });
 
         res.status(201).json(garment);
 
