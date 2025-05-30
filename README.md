@@ -1,2 +1,2 @@
 # Intermod-API
-API of Intermod App, a platform for trading used clothes.
+API of Clode App, a platform for trading used clothes.
